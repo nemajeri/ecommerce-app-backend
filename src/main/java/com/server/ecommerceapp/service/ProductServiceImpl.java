@@ -5,44 +5,44 @@ import com.server.ecommerceapp.dto.ProductDTO;
 import com.server.ecommerceapp.model.Product;
 import com.server.ecommerceapp.repository.IProductRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@Service
+@Service("ProductServiceImplementation")
 @RequiredArgsConstructor
 public class ProductServiceImpl implements IProductService {
 
     private final IProductRepository productRepository;
 
-    private final ModelMapper modelMapper;
-
     public List<ProductDTO> getProducts() {
         List<Product> products = productRepository.findAll();
 
-        Type listType = new TypeToken<List<ProductDTO>>() {}.getType();
+        ModelMapper modelMapper = new ModelMapper();
+        Type listType = new TypeToken<List<ProductDTO>>() {
+        }.getType();
         List<ProductDTO> productDTOs = modelMapper.map(products, listType);
 
         return productDTOs;
     }
 
-    public ProductDTO getProductById(Integer id) {
+    public ProductDTO getProductById(Long id) {
 
         Optional<Product> optionalProduct = productRepository.findById(id);
 
-        if(!optionalProduct.isPresent()) {
+        if (!optionalProduct.isPresent()) {
             throw new EntityNotFoundException("Product doesnt exist");
         }
 
         Product product = optionalProduct.get();
-
+        ModelMapper modelMapper = new ModelMapper();
         ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
 
         return productDTO;
@@ -65,13 +65,14 @@ public class ProductServiceImpl implements IProductService {
         Product savedProduct = productRepository.save(product);
 
         return new ProductDTO(savedProduct.getId(),
-                              savedProduct.getTitle(),
-                              savedProduct.getPrice(),
-                              savedProduct.getRating(),
-                              savedProduct.getImage(),
-                              savedProduct.getDescription());
+                savedProduct.getTitle(),
+                savedProduct.getPrice(),
+                savedProduct.getRating(),
+                savedProduct.getImage(),
+                savedProduct.getDescription());
     }
-    public void deleteProduct(Integer id) {
+
+    public void deleteProduct(Long id) {
         boolean exists = productRepository.existsById(id);
 
         if (!exists) {
@@ -80,40 +81,39 @@ public class ProductServiceImpl implements IProductService {
         productRepository.deleteById(id);
     }
 
-    @Transactional
-    public void updateProductProperties(Integer id,
-                                        String title,
-                                        Double price,
-                                        Integer rating,
-                                        String image,
-                                        String description) {
-        Product product = productRepository.findById(id).orElseThrow(
-                () -> new IllegalStateException("Product doesnt exist!"));
 
-        if (title != null &&
-                title.length() > 0 &&
-                !Objects.equals(product.getTitle(), title)) {
+    @Transactional
+    public ProductDTO updateProductProperties(Long id,
+                                              String title,
+                                              Double price,
+                                              Integer rating,
+                                              String image,
+                                              String description) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+
+        if (title != null && title.length() > 0) {
             product.setTitle(title);
         }
 
-        if (!Objects.equals(product.getPrice(), price)) {
+        if (price != null) {
             product.setPrice(price);
         }
 
-        if (!Objects.equals(product.getRating(), rating)) {
+        if (rating != null) {
             product.setRating(rating);
         }
 
-        if (image != null &&
-                image.length() > 0 &&
-                !Objects.equals(product.getImage(), image)) {
+        if (image != null && image.length() > 0) {
             product.setImage(image);
         }
 
-        if (description != null &&
-                description.length() > 0 &&
-                !Objects.equals(product.getDescription(), description)) {
+        if (description != null && description.length() > 0) {
             product.setDescription(description);
         }
+
+        product = productRepository.save(product);
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(product, ProductDTO.class);
     }
 }

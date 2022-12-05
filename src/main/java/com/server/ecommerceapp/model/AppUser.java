@@ -17,14 +17,17 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 public class AppUser {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private Integer id;
+    private Long id;
 
-    private String name;
+    @Column(name = "username", nullable = false, unique = true)
+    private String username;
 
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    @Column(name = "password", nullable = false)
     private String password;
+
     @ManyToMany(fetch = EAGER)
     private Collection<Role> roles;
-
 }

@@ -23,7 +23,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> GetProductById(@PathVariable("id") Integer id) {
+    public ResponseEntity<ProductDTO> GetProductById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(productServiceImpl.getProductById(id));
     }
 
@@ -33,18 +33,19 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> RemoveProduct(@PathVariable("id") Integer id) {
+    public ResponseEntity<Object> RemoveProduct(@PathVariable("id") Long id) {
         productServiceImpl.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
-    public void updateProduct(@PathVariable("id") Integer id,
-                              @RequestParam(required = false) String title,
-                              @RequestParam(required = false) Double price,
-                              @RequestParam(required = false) Integer rating,
-                              @RequestParam(required = false) String image,
-                              @RequestParam(required = false) String description) {
-        productServiceImpl.updateProductProperties(id, title, price, rating, image, description);
+    public ResponseEntity<ProductDTO> updateProduct(@PathVariable("id") Long id,
+                                                    @RequestParam(required = false) String title,
+                                                    @RequestParam(required = false) Double price,
+                                                    @RequestParam(required = false) Integer rating,
+                                                    @RequestParam(required = false) String image,
+                                                    @RequestParam(required = false) String description) {
+
+        return ResponseEntity.ok(productServiceImpl.updateProductProperties(id, title, price, rating, image, description));
     }
 }

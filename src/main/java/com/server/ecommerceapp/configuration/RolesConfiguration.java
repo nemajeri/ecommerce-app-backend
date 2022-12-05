@@ -1,16 +1,22 @@
-package com.server.ecommerceapp.configuration;
-
-import com.server.ecommerceapp.service.IUserService;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-@Configuration
-public class RolesConfiguration {
-
-    @Bean
-    CommandLineRunner commandLineRunner(IUserService userService) {
-        return args -> {
+//package com.server.ecommerceapp.configuration;
+//
+//import com.server.ecommerceapp.model.AppUser;
+//import com.server.ecommerceapp.model.Role;
+//import com.server.ecommerceapp.service.IUserService;
+//import lombok.RequiredArgsConstructor;
+//import org.springframework.boot.CommandLineRunner;
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Configuration;
+//
+//import java.util.ArrayList;
+//
+//@Configuration
+//@RequiredArgsConstructor
+//public class RolesConfiguration {
+//
+//    @Bean
+//    CommandLineRunner commandLineRunner(IUserService userService) {
+//        return args -> {
 //            userService.saveRole(new Role(null,"ROLE_SELLER"));
 //            userService.saveRole(new Role(null,"ROLE_BUYER"));
 //
@@ -23,6 +29,6 @@ public class RolesConfiguration {
 //            userService.parseRoleToUser("john.boe@gmail.com", "ROLE_SELLER");
 //            userService.parseRoleToUser("jane.soe@gmail.com", "ROLE_SELLER");
 //            userService.parseRoleToUser("steve.saw@gmail.com", "ROLE_BUYER");
-        };
-    }
-}
+//        };
+//    }
+//}

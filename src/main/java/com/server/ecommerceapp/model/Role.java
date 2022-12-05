@@ -1,5 +1,6 @@
 package com.server.ecommerceapp.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -17,8 +18,8 @@ public class Role {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private Integer id;
-
-    private String name;
+    private Long id;
+    @Column(name = "role", nullable = false)
+    private String roleName;
 
 }

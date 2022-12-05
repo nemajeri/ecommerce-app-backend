@@ -8,13 +8,13 @@ public interface IProductService {
 
     public List<ProductDTO> getProducts();
 
-    public ProductDTO getProductById(Integer id);
+    public ProductDTO getProductById(Long id);
 
     public ProductDTO createProduct(ProductDTO productDTO);
 
-    public void deleteProduct(Integer id);
+    public void deleteProduct(Long id);
 
-    public void updateProductProperties(Integer id,
+    public ProductDTO updateProductProperties(Long id,
                                         String title,
                                         Double price,
                                         Integer rating,

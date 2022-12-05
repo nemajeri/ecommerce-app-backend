@@ -12,7 +12,7 @@ import java.util.Collection;
 @Data
 public class AppUserDTO {
 
-    private String name;
+    private String username;
 
     private String email;
 

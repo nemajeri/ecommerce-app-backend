@@ -3,9 +3,11 @@ package com.server.ecommerceapp.repository;
 import com.server.ecommerceapp.model.Role;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface IRoleRepository extends JpaRepository<Role, Integer> {
+@Repository
+public interface IRoleRepository extends JpaRepository<Role, Long> {
 
-    Role findByName(String name);
+    Role findByRoleName(String roleName);
 
 }

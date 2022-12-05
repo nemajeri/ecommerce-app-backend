@@ -6,9 +6,9 @@ import com.server.ecommerceapp.model.AppUser;
 public interface IUserService {
     AppUser saveUser(AppUser appUser);
 
-    void parseRoleToUser(String email, String roleName);
-
-    AppUser getUser(String email);
-
-    Role saveRole(Role role);
+//    void parseRoleToUser(String email, String roleName);
+//
+//    AppUser getUser(String email);
+//
+//    Role saveRole(Role role);
 }

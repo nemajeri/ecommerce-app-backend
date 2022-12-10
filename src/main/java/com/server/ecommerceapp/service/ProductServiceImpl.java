@@ -2,28 +2,49 @@ package com.server.ecommerceapp.service;
 
 
 import com.server.ecommerceapp.dto.ProductDTO;
+import com.server.ecommerceapp.mapper.IProductMapper;
 import com.server.ecommerceapp.model.Product;
 import com.server.ecommerceapp.repository.IProductRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
-@Service("ProductServiceImplementation")
+@Service("Product Service Implementation")
 @RequiredArgsConstructor
 public class ProductServiceImpl implements IProductService {
 
     private final IProductRepository productRepository;
 
+    private final IProductMapper productMapper;
+
+    public List<ProductDTO> findProductsBySearchTerm(String searchTerm) {
+        List<ProductDTO> products = new ArrayList<>();
+        if(searchTerm.length() == 0)
+            throw new IllegalArgumentException("Search term must not be empty.");
+
+        productRepository.findProductBySearchTerm(searchTerm).forEach(product -> products.add(productMapper.toProductDTO(product)));
+        return products;
+    }
+
     public List<ProductDTO> getProducts() {
         List<Product> products = productRepository.findAll();
+
+        if(products.isEmpty())
+            throw new DataAccessException("No items were found in database") {
+                @Override
+                public String getMessage() {
+                    return super.getMessage();
+                }
+            };
 
         ModelMapper modelMapper = new ModelMapper();
         Type listType = new TypeToken<List<ProductDTO>>() {
@@ -34,7 +55,6 @@ public class ProductServiceImpl implements IProductService {
     }
 
     public ProductDTO getProductById(Long id) {
-
         Optional<Product> optionalProduct = productRepository.findById(id);
 
         if (!optionalProduct.isPresent()) {
@@ -113,7 +133,6 @@ public class ProductServiceImpl implements IProductService {
         }
 
         product = productRepository.save(product);
-        ModelMapper modelMapper = new ModelMapper();
-        return modelMapper.map(product, ProductDTO.class);
+        return productMapper.toProductDTO(product);
     }
 }

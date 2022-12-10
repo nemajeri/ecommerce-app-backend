@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface IProductService {
 
+    public List<ProductDTO> findProductsBySearchTerm(String searchTerm);
+
     public List<ProductDTO> getProducts();
 
     public ProductDTO getProductById(Long id);

@@ -4,7 +4,7 @@ import com.server.ecommerceapp.dto.AppUserDTO;
 import com.server.ecommerceapp.exception.DuplicateUserException;
 import com.server.ecommerceapp.model.AppUser;
 import com.server.ecommerceapp.dto.AuthRequestDTO;
-import com.server.ecommerceapp.repository.IUserRepository;
+import com.server.ecommerceapp.repository.UserRepository;
 import com.server.ecommerceapp.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -25,8 +25,8 @@ import java.util.Optional;
 
 @Service("Authentication Service Implementation")
 @RequiredArgsConstructor
-public class AuthServiceImpl implements IAuthService{
-    private final IUserRepository userRepository;
+public class AuthServiceImpl implements AuthService {
+    private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
 

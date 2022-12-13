@@ -5,7 +5,7 @@ import com.server.ecommerceapp.exception.DuplicateUserException;
 import com.server.ecommerceapp.dto.AuthRequestDTO;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public interface IAuthService {
+public interface AuthService {
 
     AppUserDTO registerUser(AuthRequestDTO authRequestDTO) throws DuplicateUserException;
 

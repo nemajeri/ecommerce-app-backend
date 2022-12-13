@@ -2,9 +2,9 @@ package com.server.ecommerceapp.service;
 
 
 import com.server.ecommerceapp.dto.ProductDTO;
-import com.server.ecommerceapp.mapper.IProductMapper;
+import com.server.ecommerceapp.mapper.ProductMapper;
 import com.server.ecommerceapp.model.Product;
-import com.server.ecommerceapp.repository.IProductRepository;
+import com.server.ecommerceapp.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -20,11 +20,11 @@ import java.util.Optional;
 
 @Service("Product Service Implementation")
 @RequiredArgsConstructor
-public class ProductServiceImpl implements IProductService {
+public class ProductServiceImpl implements ProductService {
 
-    private final IProductRepository productRepository;
+    private final ProductRepository productRepository;
 
-    private final IProductMapper productMapper;
+    private final ProductMapper productMapper;
 
     public List<ProductDTO> findProductsBySearchTerm(String searchTerm) {
         List<ProductDTO> products = new ArrayList<>();
@@ -39,12 +39,7 @@ public class ProductServiceImpl implements IProductService {
         List<Product> products = productRepository.findAll();
 
         if(products.isEmpty())
-            throw new DataAccessException("No items were found in database") {
-                @Override
-                public String getMessage() {
-                    return super.getMessage();
-                }
-            };
+            throw new DataAccessException("No items were found in database") {};
 
         ModelMapper modelMapper = new ModelMapper();
         Type listType = new TypeToken<List<ProductDTO>>() {

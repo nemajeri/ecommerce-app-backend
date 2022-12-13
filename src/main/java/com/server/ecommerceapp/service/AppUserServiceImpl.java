@@ -1,29 +1,44 @@
 package com.server.ecommerceapp.service;
 
 import com.server.ecommerceapp.dto.AppUserDTO;
+import com.server.ecommerceapp.dto.RoleDTO;
 import com.server.ecommerceapp.exception.UserNotFoundException;
-import com.server.ecommerceapp.mapper.IAppUserMapper;
+import com.server.ecommerceapp.mapper.AppUserMapper;
 import com.server.ecommerceapp.model.AppUser;
 import com.server.ecommerceapp.model.Role;
-import com.server.ecommerceapp.repository.IRoleRepository;
-import com.server.ecommerceapp.repository.IUserRepository;
+import com.server.ecommerceapp.repository.RoleRepository;
+import com.server.ecommerceapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
 @Service("User Service Implementation")
 @RequiredArgsConstructor
-public class AppUserServiceImpl implements IAppUserService {
-    private final IUserRepository userRepository;
+@ComponentScan("com.server.ecommerceapp.mapper")
+public class AppUserServiceImpl implements AppUserService {
+    private final UserRepository userRepository;
 
-    private final IRoleRepository roleRepository;
+    private final RoleRepository roleRepository;
 
-    private final IAppUserMapper appUserMapper;
+    private final AppUserMapper appUserMapper;
 
     @Override
     public void parseRoleToUser(String userName, String roleName) {
         AppUser appUser = userRepository.findByUsername(userName);
         Role role = roleRepository.findByRoleName(roleName);
         appUser.getRoles().add(role);
+    }
+
+    @Override
+   public void saveRole(RoleDTO roleDTO) {
+        Role role = appUserMapper.toRole(roleDTO);
+        roleRepository.save(role);
+    }
+
+    @Override
+    public void saveAppUser(AppUserDTO appUserDTO) {
+        AppUser appUser = appUserMapper.toAppUser(appUserDTO);
+        userRepository.save(appUser);
     }
 
     @Override

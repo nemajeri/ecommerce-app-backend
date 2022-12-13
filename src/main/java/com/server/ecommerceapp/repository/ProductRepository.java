@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface IProductRepository extends JpaRepository<Product, Long> {
+public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findProductByTitle(String Title);
     @Query("SELECT p FROM Product p WHERE p.title LIKE %:searchTerm%")
     List<Product> findProductBySearchTerm(@Param("searchTerm") String searchTerm);

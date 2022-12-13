@@ -4,19 +4,19 @@ import com.server.ecommerceapp.dto.ProductDTO;
 
 import java.util.List;
 
-public interface IProductService {
+public interface ProductService {
 
-    public List<ProductDTO> findProductsBySearchTerm(String searchTerm);
+     List<ProductDTO> findProductsBySearchTerm(String searchTerm);
 
-    public List<ProductDTO> getProducts();
+     List<ProductDTO> getProducts();
 
-    public ProductDTO getProductById(Long id);
+     ProductDTO getProductById(Long id);
 
-    public ProductDTO createProduct(ProductDTO productDTO);
+     ProductDTO createProduct(ProductDTO productDTO);
 
-    public void deleteProduct(Long id);
+     void deleteProduct(Long id);
 
-    public ProductDTO updateProductProperties(Long id,
+     ProductDTO updateProductProperties(Long id,
                                         String title,
                                         Double price,
                                         Integer rating,

@@ -4,8 +4,8 @@ import com.server.ecommerceapp.dto.ProductDTO;
 import com.server.ecommerceapp.service.ProductServiceImpl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataAccessException;
-import org.springframework.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +18,8 @@ public class ProductController {
 
     private final ProductServiceImpl productServiceImpl;
 
+    private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
+
     @GetMapping(value = "/search")
     public ResponseEntity<List<ProductDTO>> findProductsBySearchTerm(@RequestParam("searchTerm") String searchTerm ){
         return ResponseEntity.ok((productServiceImpl.findProductsBySearchTerm(searchTerm)));
@@ -25,11 +27,8 @@ public class ProductController {
 
     @GetMapping()
     public ResponseEntity<List<ProductDTO>> GetAllProducts() {
-        try {
+            logger.info("Handling get all products request");
             return ResponseEntity.ok(productServiceImpl.getProducts());
-        } catch (DataAccessException ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
     }
 
     @GetMapping(value ="/{id}")
@@ -39,6 +38,7 @@ public class ProductController {
 
     @PostMapping(value ="/add-product")
     public ResponseEntity<ProductDTO> AddNewProduct(@RequestBody ProductDTO productDTO) {
+        logger.info("Handling make a product in DB request");
         return ResponseEntity.ok(productServiceImpl.createProduct(productDTO));
     }
 

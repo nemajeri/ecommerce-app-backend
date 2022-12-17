@@ -6,9 +6,9 @@ import com.server.ecommerceapp.exception.UserNotFoundException;
 
 public interface AppUserService {
 
-    void parseRoleToUser(String userName, String roleName);
+    void parseRoleToUser(String username, String roleName);
 
-    AppUserDTO getUser(String userName) throws UserNotFoundException;
+    AppUserDTO getUser(String username) throws UserNotFoundException;
 
     void saveRole(RoleDTO roleDTO);
 

@@ -2,10 +2,8 @@ package com.server.ecommerceapp.configuration;
 
 import com.server.ecommerceapp.security.JwtAuthenticationEntryPoint;
 import com.server.ecommerceapp.security.JwtAuthenticationFilter;
-import com.server.ecommerceapp.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,15 +21,15 @@ import java.util.List;
 import static org.springframework.security.config.BeanIds.AUTHENTICATION_MANAGER;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
-@Configuration
+@Configuration("Overriding default Security Configuration")
 @EnableWebSecurity
 @RequiredArgsConstructor
-@ComponentScan("com.server.ecommerceapp.security")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private  JwtTokenProvider tokenProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+    private final JwtAuthenticationEntryPoint unauthorizedHandler;
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -62,18 +60,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
-                .csrf()
-                .and()
                 .cors()
+                .and()
+                .csrf()
                 .disable()
                 .exceptionHandling()
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .authenticationEntryPoint(unauthorizedHandler)
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/auth/**", "/products/**")
+                .antMatchers("/auth/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated();

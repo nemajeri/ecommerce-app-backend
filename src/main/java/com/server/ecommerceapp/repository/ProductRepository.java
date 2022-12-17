@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+@Repository("Product repo")
 public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findProductByTitle(String Title);
     @Query("SELECT p FROM Product p WHERE p.title LIKE %:searchTerm%")

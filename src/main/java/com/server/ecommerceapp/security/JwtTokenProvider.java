@@ -11,7 +11,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-@Component
+@Component("Class to generate and validate token")
 @Slf4j
 public class JwtTokenProvider {
 
@@ -59,7 +59,6 @@ public class JwtTokenProvider {
         } catch (IllegalArgumentException ex){
             log.error("JWT claims string is empty");
         }
-
         return false;
     }
 }

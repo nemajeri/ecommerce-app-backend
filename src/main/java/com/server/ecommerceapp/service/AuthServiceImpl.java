@@ -1,9 +1,11 @@
 package com.server.ecommerceapp.service;
 
 import com.server.ecommerceapp.dto.AppUserDTO;
+import com.server.ecommerceapp.dto.AppUserLoginDTO;
+import com.server.ecommerceapp.dto.AppUserRegisterDTO;
 import com.server.ecommerceapp.exception.DuplicateUserException;
+import com.server.ecommerceapp.mapper.AppUserMapper;
 import com.server.ecommerceapp.model.AppUser;
-import com.server.ecommerceapp.dto.AuthRequestDTO;
 import com.server.ecommerceapp.repository.UserRepository;
 import com.server.ecommerceapp.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -11,16 +13,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
+
 import java.util.Optional;
 
 @Service("Authentication Service Implementation")
@@ -34,50 +30,35 @@ public class AuthServiceImpl implements AuthService {
 
     private final JwtTokenProvider jwtTokenProvider;
 
+    private final AppUserMapper appUserMapper;
+
     @Override
-    public AppUserDTO registerUser(AuthRequestDTO authRequestDTO) throws DuplicateUserException {
-        Optional<AppUser> appUser = userRepository.getByUsername(authRequestDTO.getUsername());
+    public AppUserDTO registerUser(AppUserRegisterDTO appUserRegisterDTO) throws DuplicateUserException {
+        Optional<AppUser> appUser = userRepository.getByUsername(appUserRegisterDTO.getUsername());
 
         if (appUser.isPresent()) {
             throw new DuplicateUserException();
         }
 
-        ModelMapper modelMapper = new ModelMapper();
-
         AppUserDTO appUserDTO = new AppUserDTO();
-        appUserDTO.setUsername(authRequestDTO.getUsername());
-        appUserDTO.setEmail(authRequestDTO.getEmail());
-        appUserDTO.setPassword(passwordEncoder.encode(authRequestDTO.getPassword()));
+        appUserDTO.setUsername(appUserRegisterDTO.getUsername());
+        appUserDTO.setEmail(appUserRegisterDTO.getEmail());
+        appUserDTO.setPassword(passwordEncoder.encode(appUserRegisterDTO.getPassword()));
 
-        AppUser createdAppUser = modelMapper.map(appUserDTO, AppUser.class);
+        AppUser createdAppUser = appUserMapper.toAppUser(appUserDTO);
         createdAppUser = userRepository.save(createdAppUser);
 
         return appUserDTO;
     }
 
     @Override
-    public String loginUser(AuthRequestDTO authRequestDTO) {
+    public String loginUser(AppUserLoginDTO appUserLoginDTO) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        authRequestDTO.getUsername(),
-                        authRequestDTO.getPassword()
+                        appUserLoginDTO.getUsername(),
+                        appUserLoginDTO.getPassword()
                 )
         );
         return jwtTokenProvider.generateToken(authentication);
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        AppUser user = userRepository.findByUsername(userName);
-        if (user == null) {
-            System.out.println("User doesnt exist!");
-            throw new UsernameNotFoundException("User doesnt exist!");
-        }
-        System.out.println("User found!");
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        user.getRoles().forEach(role -> {
-            authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
-        });
-        return new User(user.getUsername(), user.getPassword(), authorities);
     }
 }

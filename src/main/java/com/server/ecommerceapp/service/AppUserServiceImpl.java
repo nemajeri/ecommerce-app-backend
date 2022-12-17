@@ -9,12 +9,10 @@ import com.server.ecommerceapp.model.Role;
 import com.server.ecommerceapp.repository.RoleRepository;
 import com.server.ecommerceapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
 @Service("User Service Implementation")
 @RequiredArgsConstructor
-@ComponentScan("com.server.ecommerceapp.mapper")
 public class AppUserServiceImpl implements AppUserService {
     private final UserRepository userRepository;
 
@@ -23,10 +21,11 @@ public class AppUserServiceImpl implements AppUserService {
     private final AppUserMapper appUserMapper;
 
     @Override
-    public void parseRoleToUser(String userName, String roleName) {
-        AppUser appUser = userRepository.findByUsername(userName);
+    public void parseRoleToUser(String username, String roleName) {
+        AppUser appUser = userRepository.findByUsername(username);
         Role role = roleRepository.findByRoleName(roleName);
         appUser.getRoles().add(role);
+        userRepository.save(appUser);
     }
 
     @Override
@@ -42,9 +41,9 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public AppUserDTO getUser(String userName) throws UserNotFoundException {
-        AppUser appUser = userRepository.getByUsername(userName)
-                .orElseThrow(() -> new UserNotFoundException(userName));
+    public AppUserDTO getUser(String username) throws UserNotFoundException {
+        AppUser appUser = userRepository.getByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
 
         AppUserDTO appUserDTO = appUserMapper.toAppUserDTO(appUser);
 

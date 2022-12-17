@@ -1,7 +1,7 @@
 package com.server.ecommerceapp.controller;
 
 import com.server.ecommerceapp.dto.ProductDTO;
-import com.server.ecommerceapp.service.ProductServiceImpl;
+import com.server.ecommerceapp.service.ProductService;
 
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -11,44 +11,44 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@RestController("Controller for manipulating the products")
 @RequiredArgsConstructor
-@RequestMapping(value = "api/v1/products")
+@RequestMapping(path = "api/v1/products")
 public class ProductController {
 
-    private final ProductServiceImpl productServiceImpl;
+    private final ProductService productService;
 
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
-    @GetMapping(value = "/search")
+    @GetMapping()
     public ResponseEntity<List<ProductDTO>> findProductsBySearchTerm(@RequestParam("searchTerm") String searchTerm ){
-        return ResponseEntity.ok((productServiceImpl.findProductsBySearchTerm(searchTerm)));
+        return ResponseEntity.ok((productService.findProductsBySearchTerm(searchTerm)));
     }
 
     @GetMapping()
     public ResponseEntity<List<ProductDTO>> GetAllProducts() {
             logger.info("Handling get all products request");
-            return ResponseEntity.ok(productServiceImpl.getProducts());
+            return ResponseEntity.ok(productService.getProducts());
     }
 
-    @GetMapping(value ="/{id}")
+    @GetMapping(path ="/{id}")
     public ResponseEntity<ProductDTO> GetProductById(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(productServiceImpl.getProductById(id));
+        return ResponseEntity.ok(productService.getProductById(id));
     }
 
-    @PostMapping(value ="/add-product")
+    @PostMapping(path ="/add-product")
     public ResponseEntity<ProductDTO> AddNewProduct(@RequestBody ProductDTO productDTO) {
         logger.info("Handling make a product in DB request");
-        return ResponseEntity.ok(productServiceImpl.createProduct(productDTO));
+        return ResponseEntity.ok(productService.createProduct(productDTO));
     }
 
-    @DeleteMapping(value ="/{id}")
+    @DeleteMapping(path ="/{id}")
     public ResponseEntity<Object> RemoveProduct(@PathVariable("id") Long id) {
-        productServiceImpl.deleteProduct(id);
+        productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping(value ="/{id}")
+    @PutMapping(path ="/{id}")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable("id") Long id,
                                                     @RequestParam(required = false) String title,
                                                     @RequestParam(required = false) Double price,
@@ -56,6 +56,6 @@ public class ProductController {
                                                     @RequestParam(required = false) String image,
                                                     @RequestParam(required = false) String description) {
 
-        return ResponseEntity.ok(productServiceImpl.updateProductProperties(id, title, price, rating, image, description));
+        return ResponseEntity.ok(productService.updateProductProperties(id, title, price, rating, image, description));
     }
 }

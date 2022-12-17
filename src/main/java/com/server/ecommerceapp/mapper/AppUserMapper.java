@@ -7,36 +7,35 @@ import com.server.ecommerceapp.model.Role;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 @Component
 public class AppUserMapper {
 
     public AppUserDTO toAppUserDTO(AppUser appUser) {
-        AppUserDTO appUserDTO = new AppUserDTO();
-        appUserDTO.setUsername(appUser.getUsername());
-        appUserDTO.setEmail(appUser.getEmail());
-        appUserDTO.setPassword(appUser.getPassword());
-        appUserDTO.setRoles(appUser.getRoles().stream().map(this::getRoleName).collect(Collectors.toCollection(ArrayList::new)));
-        return appUserDTO;
+        String username = appUser.getUsername();
+        String email = appUser.getEmail();
+        String password = appUser.getPassword();
+        Collection<RoleDTO> roles = appUser.getRoles()
+                .stream()
+                .map(role -> new RoleDTO(null, role.getRoleName(), new HashSet<>()))
+                .collect(Collectors.toList());
+
+        return new AppUserDTO(username, email, password, roles);
     }
 
-    private String getRoleName(Role role) {
-        return role.getRoleName();
-    }
 
     public AppUser toAppUser(AppUserDTO appUserDTO) {
         AppUser appUser = new AppUser();
         appUser.setUsername(appUserDTO.getUsername());
         appUser.setEmail(appUserDTO.getEmail());
         appUser.setPassword(appUserDTO.getPassword());
-        appUser.setRoles(appUserDTO.getRoles().stream().map(this::getRole).collect(Collectors.toCollection(ArrayList::new)));
+        appUser.setRoles(appUserDTO.getRoles().stream().map(role -> new Role(null, role.getRoleName(), new HashSet<>())).collect(Collectors.toCollection(ArrayList::new)));
         appUser.setUsername(appUserDTO.getUsername());
 
         return appUser;
-    }
-    private Role getRole (String roleName) {
-        return new Role(null , roleName);
     }
 
     public Role toRole(RoleDTO roleDTO) {

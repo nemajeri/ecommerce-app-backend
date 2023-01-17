@@ -1,9 +1,10 @@
 package com.server.ecommerceapp.exception;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(code = HttpStatus.CONFLICT)
+import static org.springframework.http.HttpStatus.CONFLICT;
+
+@ResponseStatus(code = CONFLICT)
 public class DuplicateUserException extends Exception
 {
     public DuplicateUserException()

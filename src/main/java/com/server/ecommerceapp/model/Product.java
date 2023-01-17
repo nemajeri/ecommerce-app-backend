@@ -26,4 +26,12 @@ public class Product {
     private String image;
     @Column(name = "description", nullable = false)
     private String description;
+
+    public Product(String title, Double price, Integer rating, String image, String description) {
+        this.title = title;
+        this.price = price;
+        this.rating = rating;
+        this.image = image;
+        this.description = description;
+    }
 }

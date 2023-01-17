@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Collection;
 
 
 @NoArgsConstructor
@@ -18,6 +17,6 @@ public class AppUserDTO {
 
     private String password;
 
-    private Collection<RoleDTO> roles;
+    private RoleDTO role;
 }
 

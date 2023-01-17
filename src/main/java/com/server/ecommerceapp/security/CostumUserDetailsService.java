@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -26,8 +27,11 @@ public class CostumUserDetailsService implements UserDetailsService {
         AppUser appUser = userRepository.getByUsername(username)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User with username : " + username + "not found!"));
+        System.out.println("User details: " + appUser);
+        System.out.println("UserDetails: " + new org.springframework.security.core.userdetails.User(appUser.getUsername(), appUser.getPassword(), mapRolesToAuthorities(Collections.singleton(appUser.getRole()))));
         return new org.springframework.security.core.userdetails.User(
-                appUser.getUsername(), appUser.getPassword(), mapRolesToAuthorities(appUser.getRoles()));
+                appUser.getUsername(), appUser.getPassword(), mapRolesToAuthorities(Collections.singleton(appUser.getRole())));
+
     }
 
     private Collection< ? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles){

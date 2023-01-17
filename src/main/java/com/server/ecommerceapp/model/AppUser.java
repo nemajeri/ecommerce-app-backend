@@ -6,16 +6,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-import java.util.Collection;
-
-import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@ToString(exclude = "roles")
 public class AppUser {
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -31,9 +30,9 @@ public class AppUser {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String password;
 
-    @ManyToMany(fetch = EAGER)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinTable(name = "app_user_roles",
                 joinColumns = @JoinColumn(name = "app_user_id"),
                 inverseJoinColumns = @JoinColumn(name = "roles_id"))
-    private Collection<Role> roles;
+    private Role role;
 }

@@ -1,14 +1,19 @@
 package com.server.ecommerceapp.configuration;
 
+import com.server.ecommerceapp.security.CostumUserDetailsService;
 import com.server.ecommerceapp.security.JwtAuthenticationEntryPoint;
 import com.server.ecommerceapp.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.BeanIds;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -18,49 +23,56 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-import static org.springframework.security.config.BeanIds.AUTHENTICATION_MANAGER;
-import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
-
 @Configuration("Overriding default Security Configuration")
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    @Autowired
+    private JwtAuthenticationEntryPoint unauthorizedHandler;
 
-    private final JwtAuthenticationEntryPoint unauthorizedHandler;
+    @Autowired
+    private CostumUserDetailsService costumUserDetailsService;
 
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter();
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean(value = AUTHENTICATION_MANAGER)
-    public AuthenticationManager authenticationManager() {
-        try {
-            return super.authenticationManagerBean();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    @Bean(BeanIds.AUTHENTICATION_MANAGER)
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(costumUserDetailsService).passwordEncoder(passwordEncoder());
+
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000/"));
-        corsConfiguration.setAllowedHeaders(List.of("authorization", "content-type", "x-auth-token"));
-        corsConfiguration.setAllowedMethods(List.of("GET", "DELETE", "POST", "PUT"));
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
+        corsConfiguration.setAllowedHeaders(List.of("Authorization", "Content-type", "X-auth-token"));
+        corsConfiguration.setAllowedMethods(List.of("GET", "DELETE", "POST", "PUT","OPTIONS", "PATCH"));
+        corsConfiguration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfiguration);
+        source.registerCorsConfiguration("/api/v1/**", corsConfiguration);
         return source;
     }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
-                .cors()
+                .cors().configurationSource(corsConfigurationSource())
                 .and()
                 .csrf()
                 .disable()
@@ -68,14 +80,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(unauthorizedHandler)
                 .and()
                 .sessionManagement()
-                .sessionCreationPolicy(STATELESS)
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/auth/**")
+                .antMatchers("/api/v1/product", "/api/v1/user")
+                .authenticated()
+                .antMatchers("/api/v1/auth/login","/api/v1/auth/register", "/api/v1/user/update-user")
                 .permitAll()
                 .anyRequest()
-                .authenticated();
+                .permitAll();
 
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
+
 }

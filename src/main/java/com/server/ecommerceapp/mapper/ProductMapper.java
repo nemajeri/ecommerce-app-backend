@@ -17,4 +17,15 @@ public class ProductMapper {
         productDTO.setDescription(product.getDescription());
         return productDTO;
     }
+
+    public Product toProduct(ProductDTO productDTO) {
+        Product product = new Product();
+        product.setId(productDTO.getId());
+        product.setTitle(productDTO.getTitle());
+        product.setPrice(productDTO.getPrice());
+        product.setRating(productDTO.getRating());
+        product.setImage(productDTO.getImage());
+        product.setDescription(productDTO.getDescription());
+        return product;
+    }
 }

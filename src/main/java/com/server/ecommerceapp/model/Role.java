@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
-
 import static javax.persistence.GenerationType.IDENTITY;
 
 @NoArgsConstructor
@@ -21,8 +19,7 @@ public class Role {
     private Long id;
     @Column(name = "role", nullable = false)
     private String roleName;
-    @Column(name = "app_users", nullable = false)
-    @ManyToMany(mappedBy = "roles")
-    private Set<AppUser> appUsers;
+    @OneToOne(mappedBy = "role")
+    private AppUser appUser;
 
 }

@@ -1,6 +1,8 @@
 package com.server.ecommerceapp.service;
 
 import com.server.ecommerceapp.dto.ProductDTO;
+import com.server.ecommerceapp.exception.ProductAlreadyExistsException;
+import com.server.ecommerceapp.exception.ProductNotFoundException;
 
 import java.util.List;
 
@@ -10,16 +12,11 @@ public interface ProductService {
 
      List<ProductDTO> getProducts();
 
-     ProductDTO getProductById(Long id);
+     ProductDTO getProductById(Long id) throws ProductNotFoundException;
 
-     ProductDTO createProduct(ProductDTO productDTO);
+     ProductDTO createProduct(ProductDTO productDTO) throws ProductAlreadyExistsException;
 
-     void deleteProduct(Long id);
+     void deleteProduct(Long id) throws ProductNotFoundException;
 
-     ProductDTO updateProductProperties(Long id,
-                                        String title,
-                                        Double price,
-                                        Integer rating,
-                                        String image,
-                                        String description);
+     ProductDTO updateProduct(Long id, ProductDTO productDTO) throws ProductNotFoundException;
 }

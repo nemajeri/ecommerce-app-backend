@@ -1,14 +1,13 @@
 package com.server.ecommerceapp.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Collection;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 public class AppUserRegisterDTO {
 
     private String username;
@@ -17,5 +16,5 @@ public class AppUserRegisterDTO {
 
     private String password;
 
-    private Collection<RoleDTO> roles;
+    private RoleDTO role;
 }

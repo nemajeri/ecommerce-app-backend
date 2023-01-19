@@ -15,7 +15,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductConfig {
     @Bean
-    @Autowired
     CommandLineRunner populateProductTable(ProductRepository productRepository)
     {
      return args -> {
